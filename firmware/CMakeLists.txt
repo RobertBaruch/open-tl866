@@ -26,6 +26,7 @@ target_sources(core INTERFACE
     ${CMAKE_SOURCE_DIR}/main.c
 
     ${CMAKE_SOURCE_DIR}/arglib.c
+    ${CMAKE_SOURCE_DIR}/at28.c
     ${CMAKE_SOURCE_DIR}/at89.c
     ${CMAKE_SOURCE_DIR}/comlib.c
     ${CMAKE_SOURCE_DIR}/configuration_bits.c
@@ -80,6 +81,10 @@ add_tl866_mode(tl866-bitbang
 
 add_tl866_mode(tl866-ezzif
     ${CMAKE_SOURCE_DIR}/modes/ezzif/main.c
+)
+
+add_tl866_mode(tl866-at28
+    ${CMAKE_SOURCE_DIR}/modes/at28/main.c
 )
 
 add_tl866_mode(tl866-at89
