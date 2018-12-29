@@ -79,11 +79,14 @@ TODO: convert these to ni directly instead of DIP28 => d40 => ni
 //Pin 1 => 1
 //Pin 28 => 40, etc
 #define ezzif_dip_28to40(n) ((n) <= 14 ? (n) : (n) + 40 - 28)
+#define ezzif_dip_32to40(n) ((n) <= 16 ? (n) : (n) + 40 - 32)
 
 #if defined(EZZIF_D40)
     #define ezzif_dipto40 ezzif_dip_40to40
 #elif defined(EZZIF_D28)
     #define ezzif_dipto40 ezzif_dip_28to40
+#elif defined(EZZIF_D32)
+    #define ezzif_dipto40 ezzif_dip_32to40
 #else
     #error "Must define EZZIF_DIPN"
 #endif
