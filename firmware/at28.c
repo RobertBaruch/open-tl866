@@ -1,5 +1,5 @@
 #include <xc.h>
-
+#include <stdio.h>
 #include "system.h"
 #include "at28.h"
 
@@ -72,6 +72,19 @@ void at28_setup() {
   ezzif_o(at28_pins->oe, 1);
   ezzif_o(at28_pins->we, 1);
   ezzif_bus_dir(at28_pins->data, AT28_DATA_PINS, 0);
+ezzif_print_debug();
+}
+
+void at28_enable() {
+  ezzif_o(at28_pins->ce, 1);
+  ezzif_o(at28_pins->oe, 1);
+  ezzif_o(at28_pins->we, 1);
+  vdd_en();
+  __delay_us(5000);
+}
+
+void at28_disable() {
+  vdd_dis();
 }
 
 void at28_plcc_setup() {
@@ -81,8 +94,10 @@ void at28_plcc_setup() {
 }
 
 void at28_start_read() {
+  ezzif_bus_dir(at28_pins->data, AT28_DATA_PINS, 0);
   ezzif_w(at28_pins->ce, 0);
   ezzif_w(at28_pins->oe, 0);
+  __delay_us(1);
 }
 
 void at28_stop_read() {
@@ -91,9 +106,8 @@ void at28_stop_read() {
 }
 
 unsigned char at28_read(unsigned int addr) {
-  ezzif_bus_dir(at28_pins->data, AT28_DATA_PINS, 0);
-  __delay_us(1);
   for (int i = 0; i < AT28_ADDR_PINS; i++, addr >>= 1) {
+    printf("W A%d %d %d\r\n", i, at28_pins->addr[i], addr & 0x01);
     ezzif_w(at28_pins->addr[i], addr & 0x01);
   }
   __delay_us(1);
@@ -102,6 +116,7 @@ unsigned char at28_read(unsigned int addr) {
   for (int i = AT28_DATA_PINS - 1; i >= 0; i--) {
     data <<= 1;
     data |= ezzif_r(at28_pins->data[i]);
+    printf("R D%d %d %02X\r\n", i, at28_pins->data[i], data);
   }
   return data;
 }
