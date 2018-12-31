@@ -11,6 +11,7 @@ int checking_sig = 1;
 static inline void print_help(void) {
   com_println("open-tl866 (at28)");
   com_println("-----------------");
+  com_println("i              Initialize/reset pins");
   com_println("r addr len     Read from target");
   com_println("h              Print help");
   com_println("L val          LED on/off");
@@ -31,16 +32,23 @@ static void print_read(unsigned int addr, unsigned int len) {
 static inline void eval_command(char *cmd) {
   unsigned char *cmd_t = strtok(cmd, " ");
 
-  if (cmd_t == NULL) {
-    printf("What? Use 'h' for help.");
-    return;
-  }
+  if (cmd_t == NULL) return;
 
   switch (cmd_t[0]) {
+    case 'i':
+      LED = 0;
+      at28_plcc_setup();
+      LED = 1;
+      break;
+
     case 'r': {
       unsigned int addr = xtoi(strtok(NULL, " "));
       unsigned int len = xtoi(strtok(NULL, " "));
+      LED = 0;
+      at28_start_read();
       print_read(addr, len);
+      at28_stop_read();
+      LED = 1;
       break;
     }
 
@@ -66,7 +74,7 @@ static inline void eval_command(char *cmd) {
 }
 
 void mode_main(void) {
-  vpp_dis();
+  ezzif_reset();
 
   while (1) {
     eval_command(com_cmd_prompt());

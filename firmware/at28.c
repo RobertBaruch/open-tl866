@@ -1,5 +1,5 @@
 #include <xc.h>
-
+#include <stdio.h>
 #include "system.h"
 #include "at28.h"
 
@@ -66,7 +66,7 @@ const at28_pin_info_t *at28_pins = &at28_plcc_pins;
 void at28_setup() {
   ezzif_reset();
   ezzif_gnd(at28_pins->gnd);
-  ezzif_vdd(at28_pins->vdd, VDD_35);
+  ezzif_vdd(at28_pins->vdd, VDD_30);
   ezzif_bus_dir(at28_pins->addr, AT28_ADDR_PINS, 1);
   ezzif_o(at28_pins->ce, 1);
   ezzif_o(at28_pins->oe, 1);
@@ -81,8 +81,10 @@ void at28_plcc_setup() {
 }
 
 void at28_start_read() {
+  ezzif_bus_dir(at28_pins->data, AT28_DATA_PINS, 0);
   ezzif_w(at28_pins->ce, 0);
   ezzif_w(at28_pins->oe, 0);
+  __delay_us(1);
 }
 
 void at28_stop_read() {
@@ -91,8 +93,6 @@ void at28_stop_read() {
 }
 
 unsigned char at28_read(unsigned int addr) {
-  ezzif_bus_dir(at28_pins->data, AT28_DATA_PINS, 0);
-  __delay_us(1);
   for (int i = 0; i < AT28_ADDR_PINS; i++, addr >>= 1) {
     ezzif_w(at28_pins->addr[i], addr & 0x01);
   }

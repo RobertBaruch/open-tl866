@@ -5,7 +5,8 @@
 
 /// Sets up all pins for the PLCC package.
 void at28_plcc_setup();
-
+void at28_start_read();
+void at28_stop_read();
 unsigned char at28_read(unsigned int addr);
 
 // Flip clock pin directly from TL866
